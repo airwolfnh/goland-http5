@@ -10,7 +10,9 @@ pipeline {
     }
     stages {
       stage('Angelo test') {
-        sh "echo 'Angelo Stage'"
+        steps {
+            sh "echo 'Angelo Stage'"
+        }
       }
       stage('CI Build and push snapshot') {
         when {
