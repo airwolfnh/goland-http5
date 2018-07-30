@@ -47,7 +47,7 @@ pipeline {
         }
       }
 
-      stage('Aqua Microscanner') {
+     /* stage('Aqua Microscanner') {
           environment {
           PREVIEW_VERSION = "0.0.0-SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER"
           PREVIEW_NAMESPACE = "$APP_NAME-$BRANCH_NAME".toLowerCase()
@@ -57,7 +57,7 @@ pipeline {
         steps {
             aquaMicroscanner imageName: "$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION", notCompliesCmd: 'exit 1', onDisallowed: 'fail'  
         }    
-      }    
+      }  */  
         
       stage('Build Release') {
         when {
