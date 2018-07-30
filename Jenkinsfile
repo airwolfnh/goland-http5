@@ -14,6 +14,12 @@ pipeline {
             sh "echo 'Angelo Stages'"
         }
       }
+      stage('Aqua Microscanner') {
+        steps {
+            aquaMicroscanner imageName: "$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION", notCompliesCmd: 'exit 1', onDisallowed: 'fail'  
+        }    
+      }  
+        
       stage('CI Build and push snapshot') {
         when {
           branch 'PR-*'
