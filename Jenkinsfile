@@ -11,7 +11,7 @@ pipeline {
     stages {
       stage('Angelo test') {
         steps {
-            sh "echo 'Angelo Stage'"
+            sh "echo 'Angelo Stages'"
         }
       }
       stage('CI Build and push snapshot') {
