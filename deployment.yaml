@@ -1,0 +1,21 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: default
+  name: demo-mongo
+  labels:
+    app: demo-mongo
+spec:
+  replicas: 3
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      namespace: default
+      labels:
+        app: demo-mongo
+    spec:
+      containers:
+        - name: demo-mongo
+          image: angelocontinodevmcvc5d.azurecr.io:443/apps/hello_mongo:latest
+          imagePullPolicy: Always

@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: aquasec/scanner-cli
+    tag: 3.2
+    username: ((mustafaatakan-username))
+    password: ((mustafaatakan-passwd))
+
+inputs:
+  - name: hello_mongo
+  - name: docker-push
+
+run:
+  path: hello_mongo/ci/scripts/run_security_scan.sh

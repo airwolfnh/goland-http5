@@ -1,0 +1,60 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: default
+  name: demo-go-mongo
+  labels:
+    app: demo-go-mongo
+    aadpodidbinding: aad_auth
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      namespace: default
+      labels:
+        app: demo-go-mongo
+        aadpodidbinding: aad_auth
+    spec:
+      containers:
+      - name: demo-go-mongo
+        image: angelocontinodevmcvc5d.azurecr.io/apps/hello_mongo:latest
+        imagePullPolicy: Always
+        env:
+        #- name: APPSETTING_WEBSITE_SITE_NAME
+        #  value: "test"
+        #- name: MSI_ENDPOINT
+        #  value:
+        #  value: "229365ac-76e3-4cbb-b87e-729538eb5fb4"
+        #- name: AZURE_TENANT_ID
+        #  value: "229365ac-76e3-4cbb-b87e-729538eb5fb4"
+        #- name: AZURE_CLIENT_ID
+        #  value: "0ce381f6-7330-4b86-9c7e-f45803fe2bcd"
+        #- name: AZURE_CLIENT_SECRET
+        #  valueFrom:
+        #    secretKeyRef:
+        #      name: tempsecret
+        #      key: aa
+
+        #args:
+        #  - "--subscriptionid=136518e4-53f1-45c6-92a6-a0bf006c20ea"
+        #  - "--clientid=0ce381f6-7330-4b86-9c7e-f45803fe2bcd"
+        #  - "--resourcegroup=MC_angelocontino-dev_aks-angelocontino-dev_westeurope"
+      imagePullSecrets:
+      - name: acr-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: default
+  name: demo-go-mongo-svc
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: demo-go-mongo
+  type: LoadBalancer

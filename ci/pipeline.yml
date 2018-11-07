@@ -1,0 +1,161 @@
+---
+resource_types:
+#  - name: npm-cache
+#    type: docker-image
+#    source:
+#      repository: ymedlop/npm-cache-resource
+#      tag: latest
+
+  - name: kubernetes
+    type: docker-image
+    source:
+      repository: zlabjp/kubernetes-resource
+      tag: "1.12"
+
+
+resources:
+  - name: hello_go_mongo
+    type: git
+    source: &repo-source
+      uri: https://github.com/airwolfnh/goland-http5
+      branch: master
+
+
+#  - name: dependency-cache
+#    type: npm-cache
+#    source:
+#      <<: *repo-source
+#      paths:
+#        - package.json
+
+  - name: appRegistry
+    type: docker-image
+    source:
+      repository: ((baseregistry-url))
+      username: ((baseregistry-username))
+      password: ((baseregistry-passwd))
+
+  - name: k8s
+    type: kubernetes
+    source:
+      kubeconfig: ((k8s_server))
+
+  # - name: scannercli
+  #   type: docker-image
+  #   source:
+  #     repository: aquasec/scanner-cli
+  #     tag: 3.2
+  #     username: ((aquasec-username))
+  #     password: ((aquasec-passwd))
+
+
+jobs:
+  - name: Install_dependencies
+    plan:
+      - get: hello_go_mongo
+        trigger: true
+      #- get: dependency-cache
+
+#  - name: Run_tests
+#    plan:
+#      - get: hello_hapi
+#        trigger: true
+#        passed: [Install_dependencies]
+#      - get: dependency-cache
+#        passed: [Install_dependencies]
+#      - task: run the test suite
+#        file: hello_hapi/ci/tasks/run_tests.yml
+
+#   - name: Security_scan
+#     public: true
+#     plan:
+#       - aggregate:
+#         - get: hello_hapi
+#           trigger: true
+#           passed: [Run_tests]
+#         - get: dependency-cache
+#           passed: [Run_tests]
+#         - get: scannercli
+#           params: {save: true}
+#       - task: run security scan
+#         privileged: true
+# #        file: hello_hapi/ci/tasks/run_security_scan.yml
+#         config:
+#           platform: linux
+#           image_resource:
+#             type: docker-image
+#             source:
+#               repository: amidos/dcind
+#           inputs:
+#             - name: scannercli
+#             - name: hello_hapi
+#           run:
+#             path: sh
+#             args:
+#               - -exc
+#               - |
+#                 source /docker-lib.sh
+#                 start_docker
+
+#                 docker load -i scannercli/image
+#                 docker tag "$(cat scannercli/image-id)" "$(cat scannercli/repository):$(cat scannercli/tag)"
+
+#                 cd hello_hapi
+#                 docker build -t demo-cicd:tmp .
+
+#                 docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/scanner-cli:3.2 scan -H http://aqua-web.default:8080 -U ((scan-username)) -P ((scan-passwd)) --local demo-cicd:tmp
+
+
+  - name: Docker_Push
+    public: false
+    plan:
+      - get: hello_go_mongo
+        trigger: true
+        # passed: [Security_scan]
+      #- get: dependency-cache
+        # passed: [Security_scan]
+      - put: appRegistry
+        params:
+          build: hello_go_mongo
+
+  # - name: ChartRepo_Push
+  #   plan:
+  #     - get: hello_hapi
+  #       trigger: true
+  #       passed: [Docker_Push]
+  #     - task: run security scan
+  #       privileged: true
+  #       config:
+  #         platform: linux
+  #         image_resource:
+  #           type: docker-image
+  #           source:
+  #             repository: lachlanevenson/k8s-helm
+  #         inputs:
+  #           - name: hello_hapi
+  #         run:
+  #           path: sh
+  #           args:
+  #             - -exc
+  #             - |
+  #               cd hello_hapi
+  #               helm create hello_hapi_helmpkg
+  #               cp kubedir/service.yaml hello_hapi_helmpkg/templates
+  #               cp kubedir/deployment.yaml hello_hapi_helmpkg/templates
+  #               rm hello_hapi_helmpkg/templates/ingress.yaml
+  #               helm package hello_hapi_helmpkg
+  #               curl --data-binary "@hello_hapi_helmpkg-0.1.0.tgz" http://52.151.72.37:8090/api/charts
+
+  - name: Deploy_Application
+    public: false
+    plan:
+      - get: hello_go_mongo
+        trigger: true
+        passed:
+          - "Docker_Push"
+      - put: k8s
+        params:
+#          kubectl: delete pods -l app=demo-cicd
+          kubectl: apply -f hello_go_mongo/kubeResource.yml
+          wait_until_ready: 300
+#          kubeconfig_file: ./.kube/config
