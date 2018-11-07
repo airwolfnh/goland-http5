@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: demo-go-mongo
-        image: angelocontinodevmcvc5d.azurecr.io/apps/hello_mongo:latest
+        image: angelocontinodevmcvc5d.azurecr.io/apps/hello_go_mongo:latest
         imagePullPolicy: Always
         env:
         #- name: APPSETTING_WEBSITE_SITE_NAME
