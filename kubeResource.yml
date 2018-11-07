@@ -22,6 +22,12 @@ spec:
         image: angelocontinodevmcvc5d.azurecr.io/apps/hello_go_mongo:latest
         imagePullPolicy: Always
         env:
+        - name: AZURE_KEYVAULT_NAME
+          value: angelocontinodevQy2a
+        - name: AZURE_KEYVAULT_SECRET_NAME
+          value: cosmostest
+        - name: AZURE_KEYVAULT_SECRET_VERSION
+          value: 5878840f321446c1b4c59fbd2fb4ce6b
         #- name: APPSETTING_WEBSITE_SITE_NAME
         #  value: "test"
         #- name: MSI_ENDPOINT
