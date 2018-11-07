@@ -19,7 +19,8 @@ func hello(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Azure AD Pod Identity + Keyvault Sample")
 }
 
-func getKeyvaultSecret(w http.ResponseWriter, r *http.Request) {
+//func getKeyvaultSecret(w http.ResponseWriter, r *http.Request) {
+func getKeyvaultSecret() {
 	keyvaultName := os.Getenv("AZURE_KEYVAULT_NAME")
 	keyvaultSecretName := os.Getenv("AZURE_KEYVAULT_SECRET_NAME")
 	keyvaultSecretVersion := os.Getenv("AZURE_KEYVAULT_SECRET_VERSION")
@@ -37,7 +38,8 @@ func getKeyvaultSecret(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	io.WriteString(w, fmt.Sprintf("The value of the Keyvault secret is: %v", *secret.Value))
+	//io.WriteString(w, fmt.Sprintf("The value of the Keyvault secret is: %v", *secret.Value))
+	io.WriteString(w, fmt.Sprintf("%v", *secret.Value))
 }
 
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
