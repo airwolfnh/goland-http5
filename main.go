@@ -87,7 +87,8 @@ func main() {
 	mux.HandleFunc(pat.Delete("/books/:isbn"), deleteBook(session))
     */
 	http.HandleFunc("/keyvault", getKeyvaultSecret)
-	http.ListenAndServe("localhost:8080", mux)
+	//http.ListenAndServe("localhost:8080", mux)
+    http.ListenAndServe(":8080", nil)
 }
 
 func ensureIndex(s *mgo.Session) {
