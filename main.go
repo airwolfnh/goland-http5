@@ -9,7 +9,7 @@ import (
     "encoding/json"
 	"github.com/Azure/azure-sdk-for-go/services/keyvault/2016-10-01/keyvault"
 	"github.com/Azure/azure-sdk-for-go/services/keyvault/auth"
-	"goji.io"
+	//"goji.io"
 	"goji.io/pat"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -69,7 +69,7 @@ type Book struct {
 func main() {
     //connection_string, err := getKeyvaultSecret()
     //connection_string := "test"
-	mux := goji.NewMux()
+	//mux := goji.NewMux()
 	/*
     session, err := mgo.Dial(connection_string)
 	if err != nil {
