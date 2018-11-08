@@ -39,7 +39,7 @@ func getKeyvaultSecret() {
 	}
 
 	//io.WriteString(w, fmt.Sprintf("The value of the Keyvault secret is: %v", *secret.Value))
-	io.WriteString(w, fmt.Sprintf("%v", *secret.Value))
+	return secret.Value
 }
 
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
