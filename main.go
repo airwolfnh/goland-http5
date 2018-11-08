@@ -19,9 +19,9 @@ func hello(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Azure AD Pod Identity + Keyvault Sample")
 }
 
-//func getKeyvaultSecret(w http.ResponseWriter, r *http.Request) {
+func getKeyvaultSecret(w http.ResponseWriter, r *http.Request) {
 //func getKeyvaultSecret( connection_string string) {
-func getKeyvaultSecret() (string) {
+//func getKeyvaultSecret() (string,error) {
 	keyvaultName := os.Getenv("AZURE_KEYVAULT_NAME")
 	keyvaultSecretName := os.Getenv("AZURE_KEYVAULT_SECRET_NAME")
 	keyvaultSecretVersion := os.Getenv("AZURE_KEYVAULT_SECRET_VERSION")
@@ -34,16 +34,17 @@ func getKeyvaultSecret() (string) {
 	}
 
 	secret, err := keyClient.GetSecret(context.Background(), fmt.Sprintf("https://%s.vault.azure.net", keyvaultName), keyvaultSecretName, keyvaultSecretVersion)
-	//if err != nil {
-	//	log.Printf("failed to retrieve the Keyvault secret: %v", err)
-	//	return
-	//}
+	if err != nil {
+		log.Printf("failed to retrieve the Keyvault secret: %v", err)
+		return
+	}
 
 	//io.WriteString(w, fmt.Sprintf("The value of the Keyvault secret is: %v", *secret.Value))
-    value := *secret.Value
-    fmt.Printf(*secret.Value)
+	io.WriteString(w, fmt.Sprintf("The value of the Keyvault secret is: %v", *secret.Value))
+    //value := secret.Value
+    //return fmt.Printf(string(*secret.Value))
     //value2 := "test"
-	return value
+    //return secret.Value
 }
 
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
@@ -66,7 +67,8 @@ type Book struct {
 }
 
 func main() {
-    connection_string  := getKeyvaultSecret()
+    //connection_string, err := getKeyvaultSecret()
+    connection_string := "test"
 	session, err := mgo.Dial(connection_string)
 	if err != nil {
 		panic(err)
@@ -77,6 +79,7 @@ func main() {
 	ensureIndex(session)
 
 	mux := goji.NewMux()
+	http.HandleFunc("/keyvault", getKeyvaultSecret)
 	mux.HandleFunc(pat.Get("/books"), allBooks(session))
 	mux.HandleFunc(pat.Post("/books"), addBook(session))
 	mux.HandleFunc(pat.Get("/books/:isbn"), bookByISBN(session))
