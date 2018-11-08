@@ -68,7 +68,8 @@ type Book struct {
 
 func main() {
     //connection_string, err := getKeyvaultSecret()
-    connection_string := "test"
+    //connection_string := "test"
+	mux := goji.NewMux()
 	/*
     session, err := mgo.Dial(connection_string)
 	if err != nil {
@@ -78,14 +79,14 @@ func main() {
 
 	session.SetMode(mgo.Monotonic, true)
 	ensureIndex(session)
-    */
 	mux := goji.NewMux()
-	http.HandleFunc("/keyvault", getKeyvaultSecret)
-	mux.HandleFunc(pat.Get("/books"), allBooks(session))
+    mux.HandleFunc(pat.Get("/books"), allBooks(session))
 	mux.HandleFunc(pat.Post("/books"), addBook(session))
 	mux.HandleFunc(pat.Get("/books/:isbn"), bookByISBN(session))
 	mux.HandleFunc(pat.Put("/books/:isbn"), updateBook(session))
 	mux.HandleFunc(pat.Delete("/books/:isbn"), deleteBook(session))
+    */
+	http.HandleFunc("/keyvault", getKeyvaultSecret)
 	http.ListenAndServe("localhost:8080", mux)
 }
 
