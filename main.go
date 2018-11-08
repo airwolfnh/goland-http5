@@ -20,7 +20,8 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 //func getKeyvaultSecret(w http.ResponseWriter, r *http.Request) {
-func getKeyvaultSecret() {
+//func getKeyvaultSecret( connection_string string) {
+func getKeyvaultSecret() (string) {
 	keyvaultName := os.Getenv("AZURE_KEYVAULT_NAME")
 	keyvaultSecretName := os.Getenv("AZURE_KEYVAULT_SECRET_NAME")
 	keyvaultSecretVersion := os.Getenv("AZURE_KEYVAULT_SECRET_VERSION")
@@ -33,13 +34,16 @@ func getKeyvaultSecret() {
 	}
 
 	secret, err := keyClient.GetSecret(context.Background(), fmt.Sprintf("https://%s.vault.azure.net", keyvaultName), keyvaultSecretName, keyvaultSecretVersion)
-	if err != nil {
-		log.Printf("failed to retrieve the Keyvault secret: %v", err)
-		return
-	}
+	//if err != nil {
+	//	log.Printf("failed to retrieve the Keyvault secret: %v", err)
+	//	return
+	//}
 
 	//io.WriteString(w, fmt.Sprintf("The value of the Keyvault secret is: %v", *secret.Value))
-	return secret.Value
+    value := *secret.Value
+    fmt.Printf(*secret.Value)
+    //value2 := "test"
+	return value
 }
 
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
@@ -62,7 +66,8 @@ type Book struct {
 }
 
 func main() {
-	session, err := mgo.Dial(getKeyvaultSecret)
+    connection_string  := getKeyvaultSecret()
+	session, err := mgo.Dial(connection_string)
 	if err != nil {
 		panic(err)
 	}
